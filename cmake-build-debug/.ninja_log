@@ -1,0 +1,4 @@
+# ninja log v6
+3	252	1765577517679583156	CMakeFiles/risc_v_emulator.dir/main.cpp.o	eef0633d1eb03f52
+260	291	1765577652509343555	risc_v_emulator	bef796ef5c6ed31a
+4	260	1765577652253790207	CMakeFiles/risc_v_emulator.dir/cpu.cpp.o	382730aa5880765c

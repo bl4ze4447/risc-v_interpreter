@@ -1,0 +1,3 @@
+/Users/bl4ze/CLionProjects/risc-v-emulator/cmake-build-debug/CMakeFiles/risc_v_emulator.dir
+/Users/bl4ze/CLionProjects/risc-v-emulator/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/bl4ze/CLionProjects/risc-v-emulator/cmake-build-debug/CMakeFiles/rebuild_cache.dir

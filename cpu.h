@@ -164,7 +164,7 @@ class cpu {
     void                instr_jal(bool args_ok, const std::string& arg1, const std::string& arg2);
     void                instr_jr(bool args_ok, const std::string& arg1, const std::string& arg2);
     void                instr_sltz(bool args_ok, const std::string& arg1, const std::string& arg2);
-    void                instr_sqtz(bool args_ok, const std::string& arg1, const std::string& arg2);
+    void                instr_sgtz(bool args_ok, const std::string& arg1, const std::string& arg2);
 
     void                instr_add(bool args_ok, const std::string& arg1, const std::string& arg2, const std::string& arg3);
     void                instr_sub(bool args_ok, const std::string& arg1, const std::string& arg2, const std::string& arg3);

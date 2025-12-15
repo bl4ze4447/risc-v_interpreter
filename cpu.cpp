@@ -216,7 +216,11 @@ void cpu::instr_sh(bool args_ok, const std::string &arg1, const std::string &arg
 void cpu::instr_sw(bool args_ok, const std::string &arg1, const std::string &arg2) {
 }
 
-void cpu::instr_li(bool args_ok, const std::string &arg1, const std::string &arg2) {
+void cpu::instr_li(const bool args_ok, const std::string &arg1, const std::string &arg2) {
+    if (!args_ok)
+        throw std::invalid_argument("Invalid argument");
+
+    instr_add(true, arg1, arg1, arg2);
 }
 
 void cpu::instr_lui(bool args_ok, const std::string &arg1, const std::string &arg2) {
@@ -225,25 +229,44 @@ void cpu::instr_lui(bool args_ok, const std::string &arg1, const std::string &ar
 void cpu::instr_auipc(bool args_ok, const std::string &arg1, const std::string &arg2) {
 }
 
-void cpu::instr_mv(bool args_ok, const std::string &arg1, const std::string &arg2) {
+void cpu::instr_mv(const bool args_ok, const std::string &arg1, const std::string &arg2) {
+    if (!args_ok)
+        throw std::invalid_argument("Invalid argument");
+
+    instr_add(true, arg1, arg2, "0");
 }
 
-void cpu::instr_sextw(bool args_ok, const std::string &arg1, const std::string &arg2) {
-}
+void cpu::instr_sextw(bool args_ok, const std::string &arg1, const std::string &arg2) {}
 
-void cpu::instr_neg(bool args_ok, const std::string &arg1, const std::string &arg2) {
+void cpu::instr_neg(const bool args_ok, const std::string &arg1, const std::string &arg2) {
+    if (!args_ok)
+        throw std::invalid_argument("Invalid argument");
+
+    instr_sub(true, arg1, "x0", arg2);
 }
 
 void cpu::instr_negw(bool args_ok, const std::string &arg1, const std::string &arg2) {
 }
 
-void cpu::instr_seqz(bool args_ok, const std::string &arg1, const std::string &arg2) {
+void cpu::instr_seqz(const bool args_ok, const std::string &arg1, const std::string &arg2) {
+    if (!args_ok)
+        throw std::invalid_argument("Invalid argument");
+
+    instr_sltu(true, arg1, arg2, "1");
 }
 
-void cpu::instr_snez(bool args_ok, const std::string &arg1, const std::string &arg2) {
+void cpu::instr_snez(const bool args_ok, const std::string &arg1, const std::string &arg2) {
+    if (!args_ok)
+        throw std::invalid_argument("Invalid argument");
+
+    instr_sltu(true, arg1, "x0", arg2);
 }
 
-void cpu::instr_not(bool args_ok, const std::string &arg1, const std::string &arg2) {
+void cpu::instr_not(const bool args_ok, const std::string &arg1, const std::string &arg2) {
+    if (!args_ok)
+        throw std::invalid_argument("Invalid argument");
+
+    instr_xor(true, arg1, arg2, "-1");
 }
 
 void cpu::instr_jal(bool args_ok, const std::string &arg1, const std::string &arg2) {
@@ -252,10 +275,18 @@ void cpu::instr_jal(bool args_ok, const std::string &arg1, const std::string &ar
 void cpu::instr_jr(bool args_ok, const std::string &arg1, const std::string &arg2) {
 }
 
-void cpu::instr_sltz(bool args_ok, const std::string &arg1, const std::string &arg2) {
+void cpu::instr_sltz(const bool args_ok, const std::string &arg1, const std::string &arg2) {
+    if (!args_ok)
+        throw std::invalid_argument("Invalid argument");
+
+    instr_slt(true, arg1, arg2, "x0");
 }
 
-void cpu::instr_sqtz(bool args_ok, const std::string &arg1, const std::string &arg2) {
+void cpu::instr_sgtz(const bool args_ok, const std::string &arg1, const std::string &arg2) {
+    if (!args_ok)
+        throw std::invalid_argument("Invalid argument");
+
+    instr_slt(true, arg1, "x0", arg2);
 }
 
 void cpu::instr_sub(const bool args_ok, const std::string &arg1, const std::string &arg2, const std::string &arg3) {
@@ -614,7 +645,7 @@ void cpu::execute_instruction(std::string &inst) {
         case hash("jal"):    instr_jal(args == 2, arg1, arg2); break;
         case hash("jr"):     instr_jr(args == 2, arg1, arg2); break;
         case hash("sltz"):   instr_sltz(args == 2, arg1, arg2); break;
-        case hash("sgtz"):   instr_sqtz(args == 2, arg1, arg2); break;
+        case hash("sgtz"):   instr_sgtz(args == 2, arg1, arg2); break;
 
         /* 3 args */
         case hash("add"):

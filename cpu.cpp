@@ -145,7 +145,7 @@ int32_t cpu::get_imm20(const std::string &s) {
 }
 
 void cpu::print_registers(const bool hex) const {
-    std::cout << "\n------------- Registers -------------\n";
+    std::cout << "------------- Registers -------------\n";
     size_t i = 0;
     for (const auto &r : registers) {
         std::cout << std::left << std::setw(6) << std::setfill(' ') << std::dec << r.name  << "| x" << i << std::left << std::setw(3) << std::setfill(' ') << std::dec<< " = " << std::right << (hex ? std::setw(8) : std::setw(0)) << std::setfill('0') << (hex ? std::hex : std::dec) << r.value << "\n";
@@ -203,7 +203,7 @@ void cpu::instr_ret(bool args_ok) {
 
 void cpu::instr_nop(const bool args_ok) {
     if (!args_ok)
-        throw std::invalid_argument("Invalid argument");
+        throw std::invalid_argument("Number of args is invalid: nop");
 }
 
 void cpu::instr_ecall(bool args_ok) {
@@ -247,13 +247,14 @@ void cpu::instr_sw(bool args_ok, const std::string &arg1, const std::string &arg
 
 void cpu::instr_li(const bool args_ok, const std::string &arg1, const std::string &arg2) {
     if (!args_ok)
-        throw std::invalid_argument("Invalid argument");
+        throw std::invalid_argument("Number of args is invalid: li");
 
     instr_add(true, arg1, "x0", arg2);
 }
 
 void cpu::instr_lui(const bool args_ok, const std::string &arg1, const std::string &arg2) {
-    if (!args_ok) throw std::invalid_argument("Invalid args");
+    if (!args_ok)
+        throw std::invalid_argument("Number of args is invalid: lui");
 
     const size_t rd = get_register_index(arg1);
     const int32_t imm20 = get_imm20(arg2);
@@ -265,7 +266,7 @@ void cpu::instr_auipc(bool args_ok, const std::string &arg1, const std::string &
 
 void cpu::instr_mv(const bool args_ok, const std::string &arg1, const std::string &arg2) {
     if (!args_ok)
-        throw std::invalid_argument("Invalid argument");
+        throw std::invalid_argument("Number of args is invalid: mv");
 
     instr_add(true, arg1, arg2, "0");
 }
@@ -274,7 +275,7 @@ void cpu::instr_sextw(bool args_ok, const std::string &arg1, const std::string &
 
 void cpu::instr_neg(const bool args_ok, const std::string &arg1, const std::string &arg2) {
     if (!args_ok)
-        throw std::invalid_argument("Invalid argument");
+        throw std::invalid_argument("Number of args is invalid: neg");
 
     instr_sub(true, arg1, "x0", arg2);
 }
@@ -284,21 +285,21 @@ void cpu::instr_negw(bool args_ok, const std::string &arg1, const std::string &a
 
 void cpu::instr_seqz(const bool args_ok, const std::string &arg1, const std::string &arg2) {
     if (!args_ok)
-        throw std::invalid_argument("Invalid argument");
+        throw std::invalid_argument("Number of args is invalid: seqz");
 
     instr_sltu(true, arg1, arg2, "1");
 }
 
 void cpu::instr_snez(const bool args_ok, const std::string &arg1, const std::string &arg2) {
     if (!args_ok)
-        throw std::invalid_argument("Invalid argument");
+        throw std::invalid_argument("Number of args is invalid: snez");
 
     instr_sltu(true, arg1, "x0", arg2);
 }
 
 void cpu::instr_not(const bool args_ok, const std::string &arg1, const std::string &arg2) {
     if (!args_ok)
-        throw std::invalid_argument("Invalid argument");
+        throw std::invalid_argument("Number of args is invalid: not");
 
     instr_xor(true, arg1, arg2, "-1");
 }
@@ -311,21 +312,21 @@ void cpu::instr_jr(bool args_ok, const std::string &arg1, const std::string &arg
 
 void cpu::instr_sltz(const bool args_ok, const std::string &arg1, const std::string &arg2) {
     if (!args_ok)
-        throw std::invalid_argument("Invalid argument");
+        throw std::invalid_argument("Number of args is invalid: sltz");
 
     instr_slt(true, arg1, arg2, "x0");
 }
 
 void cpu::instr_sgtz(const bool args_ok, const std::string &arg1, const std::string &arg2) {
     if (!args_ok)
-        throw std::invalid_argument("Invalid argument");
+        throw std::invalid_argument("Number of args is invalid: sgtz");
 
     instr_slt(true, arg1, "x0", arg2);
 }
 
 void cpu::instr_sub(const bool args_ok, const std::string &arg1, const std::string &arg2, const std::string &arg3) {
     if (!args_ok)
-        throw std::invalid_argument("Invalid number of args!");
+        throw std::invalid_argument("Number of args is invalid: sub");
 
     const size_t rd = get_register_index(arg1);
     const size_t rs1 = get_register_index(arg2);
@@ -335,7 +336,7 @@ void cpu::instr_sub(const bool args_ok, const std::string &arg1, const std::stri
 
 void cpu::instr_xor(const bool args_ok, const std::string &arg1, const std::string &arg2, const std::string &arg3) {
     if (!args_ok)
-        throw std::invalid_argument("Invalid number of args!");
+        throw std::invalid_argument("Number of args is invalid: xor");
 
     const size_t rd = get_register_index(arg1);
     const size_t rs1 = get_register_index(arg2);
@@ -351,7 +352,7 @@ void cpu::instr_xor(const bool args_ok, const std::string &arg1, const std::stri
 
 void cpu::instr_or(const bool args_ok, const std::string &arg1, const std::string &arg2, const std::string &arg3) {
     if (!args_ok)
-        throw std::invalid_argument("Invalid number of args!");
+        throw std::invalid_argument("Number of args is invalid: or");
 
     const size_t rd = get_register_index(arg1);
     const size_t rs1 = get_register_index(arg2);
@@ -367,7 +368,7 @@ void cpu::instr_or(const bool args_ok, const std::string &arg1, const std::strin
 
 void cpu::instr_and(const bool args_ok, const std::string &arg1, const std::string &arg2, const std::string &arg3) {
     if (!args_ok)
-        throw std::invalid_argument("Invalid number of args!");
+        throw std::invalid_argument("Number of args is invalid: and");
 
     const size_t rd = get_register_index(arg1);
     const size_t rs1 = get_register_index(arg2);
@@ -383,7 +384,7 @@ void cpu::instr_and(const bool args_ok, const std::string &arg1, const std::stri
 
 void cpu::instr_sll(const bool args_ok, const std::string &arg1, const std::string &arg2, const std::string &arg3) {
     if (!args_ok)
-        throw std::invalid_argument("Invalid number of args!");
+        throw std::invalid_argument("Number of args is invalid: sll");
 
     const size_t rd = get_register_index(arg1);
     const size_t rs1 = get_register_index(arg2);
@@ -399,7 +400,7 @@ void cpu::instr_sll(const bool args_ok, const std::string &arg1, const std::stri
 
 void cpu::instr_srl(const bool args_ok, const std::string &arg1, const std::string &arg2, const std::string &arg3) {
     if (!args_ok)
-        throw std::invalid_argument("Invalid number of args!");
+        throw std::invalid_argument("Number of args is invalid: srl");
 
     const size_t rd = get_register_index(arg1);
     const size_t rs1 = get_register_index(arg2);
@@ -415,7 +416,7 @@ void cpu::instr_srl(const bool args_ok, const std::string &arg1, const std::stri
 
 void cpu::instr_sltu(const bool args_ok, const std::string &arg1, const std::string &arg2, const std::string &arg3) {
     if (!args_ok)
-        throw std::invalid_argument("Invalid number of args!");
+        throw std::invalid_argument("Number of args is invalid: sltu");
 
     const size_t rd = get_register_index(arg1);
     const size_t rs1 = get_register_index(arg2);
@@ -431,7 +432,7 @@ void cpu::instr_sltu(const bool args_ok, const std::string &arg1, const std::str
 
 void cpu::instr_slt(const bool args_ok, const std::string &arg1, const std::string &arg2, const std::string &arg3) {
     if (!args_ok)
-        throw std::invalid_argument("Invalid number of args!");
+        throw std::invalid_argument("Number of args is invalid: slt");
 
     const size_t rd = get_register_index(arg1);
     const size_t rs1 = get_register_index(arg2);
@@ -447,7 +448,7 @@ void cpu::instr_slt(const bool args_ok, const std::string &arg1, const std::stri
 
 void cpu::instr_sra(const bool args_ok, const std::string &arg1, const std::string &arg2, const std::string &arg3) {
     if (!args_ok)
-        throw std::invalid_argument("Invalid number of args!");
+        throw std::invalid_argument("Number of args is invalid: sra");
 
     const size_t rd = get_register_index(arg1);
     const size_t rs1 = get_register_index(arg2);
@@ -484,7 +485,7 @@ void cpu::instr_jalr(bool args_ok, const std::string &arg1, const std::string &a
 
 void cpu::instr_mul(const bool args_ok, const std::string &arg1, const std::string &arg2, const std::string &arg3) {
     if (!args_ok)
-        throw std::invalid_argument("Invalid number of args!");
+        throw std::invalid_argument("Number of args is invalid: mul");
 
     const size_t rd = get_register_index(arg1);
     const size_t rs1 = get_register_index(arg2);
@@ -494,7 +495,7 @@ void cpu::instr_mul(const bool args_ok, const std::string &arg1, const std::stri
 
 void cpu::instr_mulh(const bool args_ok, const std::string &arg1, const std::string &arg2, const std::string &arg3) {
     if (!args_ok)
-        throw std::invalid_argument("Invalid number of args!");
+        throw std::invalid_argument("Number of args is invalid: mulh");
 
     const size_t rd = get_register_index(arg1);
     const size_t rs1 = get_register_index(arg2);
@@ -505,7 +506,7 @@ void cpu::instr_mulh(const bool args_ok, const std::string &arg1, const std::str
 
 void cpu::instr_mulsu(const bool args_ok, const std::string &arg1, const std::string &arg2, const std::string &arg3) {
     if (!args_ok)
-        throw std::invalid_argument("Invalid number of args!");
+        throw std::invalid_argument("Number of args is invalid: mulsu");
 
     const size_t rd = get_register_index(arg1);
     const size_t rs1 = get_register_index(arg2);
@@ -516,7 +517,7 @@ void cpu::instr_mulsu(const bool args_ok, const std::string &arg1, const std::st
 
 void cpu::instr_mulu(const bool args_ok, const std::string &arg1, const std::string &arg2, const std::string &arg3) {
     if (!args_ok)
-        throw std::invalid_argument("Invalid number of args!");
+        throw std::invalid_argument("Number of args is invalid: mulu");
 
     const size_t rd = get_register_index(arg1);
     const size_t rs1 = get_register_index(arg2);
@@ -526,7 +527,7 @@ void cpu::instr_mulu(const bool args_ok, const std::string &arg1, const std::str
 
 void cpu::instr_div(const bool args_ok, const std::string &arg1, const std::string &arg2, const std::string &arg3) {
     if (!args_ok)
-        throw std::invalid_argument("Invalid number of args!");
+        throw std::invalid_argument("Number of args is invalid: div");
 
     const size_t rd = get_register_index(arg1);
     const size_t rs1 = get_register_index(arg2);
@@ -548,7 +549,7 @@ void cpu::instr_div(const bool args_ok, const std::string &arg1, const std::stri
 
 void cpu::instr_divu(const bool args_ok, const std::string &arg1, const std::string &arg2, const std::string &arg3) {
     if (!args_ok)
-        throw std::invalid_argument("Invalid number of args!");
+        throw std::invalid_argument("Number of args is invalid: divu");
 
     const size_t rd = get_register_index(arg1);
     const size_t rs1 = get_register_index(arg2);
@@ -564,7 +565,7 @@ void cpu::instr_divu(const bool args_ok, const std::string &arg1, const std::str
 
 void cpu::instr_rem(const bool args_ok, const std::string &arg1, const std::string &arg2, const std::string &arg3) {
     if (!args_ok)
-        throw std::invalid_argument("Invalid number of args!");
+        throw std::invalid_argument("Number of args is invalid: rem");
 
     const size_t rd = get_register_index(arg1);
     const size_t rs1 = get_register_index(arg2);
@@ -580,7 +581,7 @@ void cpu::instr_rem(const bool args_ok, const std::string &arg1, const std::stri
 
 void cpu::instr_remu(const bool args_ok, const std::string &arg1, const std::string &arg2, const std::string &arg3) {
     if (!args_ok)
-        throw std::invalid_argument("Invalid number of args!");
+        throw std::invalid_argument("Number of args is invalid: remu");
 
     const size_t rd = get_register_index(arg1);
     const size_t rs1 = get_register_index(arg2);
@@ -608,7 +609,7 @@ void cpu::instr_bleu(bool args_ok, const std::string &arg1, const std::string &a
 
 void cpu::instr_add(const bool args_ok, const std::string &arg1, const std::string &arg2, const std::string &arg3) {
     if (!args_ok)
-        throw std::invalid_argument("Invalid number of args!");
+        throw std::invalid_argument("Number of args is invalid: add");
 
     const size_t rd = get_register_index(arg1);
     const size_t rs1 = get_register_index(arg2);
@@ -640,9 +641,17 @@ void cpu::execute_instruction(std::string &inst) {
 
     if (op.empty()) return;
     if (is_comment(op)) return;
-    if (is_comment(arg1)) arg1.clear();
-    if (is_comment(arg2)) arg2.clear();
-    if (is_comment(arg3)) arg3.clear();
+    if (is_comment(arg1)) {
+        arg1.clear();
+        arg2.clear();
+        arg3.clear();
+    }
+    if (is_comment(arg2)) {
+        arg2.clear();
+        arg3.clear();
+    }
+    if (is_comment(arg3))
+        arg3.clear();
 
     size_t args = !arg1.empty() + !arg2.empty() + !arg3.empty();
     switch (hash(op.c_str())) {
@@ -687,11 +696,6 @@ void cpu::execute_instruction(std::string &inst) {
             instr_add(args == 3, arg1, arg2, arg3);
             break;
 
-        case hash("sub"):
-        case hash("subi"):
-            instr_sub(args == 3, arg1, arg2, arg3);
-            break;
-
         case hash("xor"):
         case hash("xori"):
             instr_xor(args == 3, arg1, arg2, arg3);
@@ -722,6 +726,9 @@ void cpu::execute_instruction(std::string &inst) {
             instr_sra(args == 3, arg1, arg2, arg3);
             break;
 
+        case hash("sub"):    instr_sub(args == 3, arg1, arg2, arg3); break;
+        case hash("slt"):    instr_slt(args == 3, arg1, arg2, arg3); break;
+        case hash("sltu"):   instr_sltu(args == 3, arg1, arg2, arg3); break;
         case hash("beq"):    instr_beq(args == 3, arg1, arg2, arg3); break;
         case hash("bne"):    instr_bne(args == 3, arg1, arg2, arg3); break;
         case hash("blt"):    instr_blt(args == 3, arg1, arg2, arg3); break;
@@ -745,6 +752,4 @@ void cpu::execute_instruction(std::string &inst) {
         default:
             throw std::invalid_argument("Operation not implemented: " + op);
     }
-
-    print_registers(false);
 }

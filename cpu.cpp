@@ -31,6 +31,17 @@ uint32_t cpu::stoui_offset(const std::string &s, size_t offset) {
 
     return num;
 }
+uint32_t cpu::get_bits_from_range(const uint32_t num, const size_t start, const size_t end) {
+    if (start > end)
+        throw std::invalid_argument("start cannot be bigger than end: " + std::to_string(start) + " (start) /  "+ std::to_string(end) + " (end)");
+
+    if (end > 31)
+        throw std::invalid_argument("end cannot be bigger than 31: " + std::to_string(end));
+
+    const uint64_t mask = (1ULL << end-start+1) - 1;
+    return (num >> start) & static_cast<uint32_t>(mask);
+}
+
 size_t cpu::get_register_index(const std::string &reg_name) {
     if (reg_name.empty()) throw std::invalid_argument("Empty register");
 
@@ -111,10 +122,28 @@ int16_t cpu::get_imm12(const std::string &s) {
         throw std::invalid_argument("Invalid imm12: " + s);
     }
 
+    // signed 12 bits integer
     if (imm12 < -2048 || imm12 > 2047) throw std::invalid_argument("Invalid imm12 range: " + s);
 
     return static_cast<int16_t>(imm12);
 }
+
+int32_t cpu::get_imm20(const std::string &s) {
+    if (s.empty()) throw std::invalid_argument("Empty imm20");
+
+    int imm20 = 0;
+    try {
+        imm20 = std::stoi(s);
+    } catch (const std::exception &) {
+        throw std::invalid_argument("Invalid imm20: " + s);
+    }
+
+    // signed 20bits integer
+    if (imm20 < -524288 || imm20 > 524287) throw std::invalid_argument("Invalid imm20 range: " + s);
+
+    return imm20;
+}
+
 void cpu::print_registers(const bool hex) const {
     std::cout << "\n------------- Registers -------------\n";
     size_t i = 0;
@@ -159,7 +188,7 @@ void cpu::prepare_instruction(std::string &inst) {
         inst.clear();
 }
 
-bool cpu::is_comment(const std::string &s) {
+bool cpu::is_comment(const std::string &s) const {
     if (s.empty())
         return false;
 
@@ -220,7 +249,7 @@ void cpu::instr_li(const bool args_ok, const std::string &arg1, const std::strin
     if (!args_ok)
         throw std::invalid_argument("Invalid argument");
 
-    instr_add(true, arg1, arg1, arg2);
+    instr_add(true, arg1, "x0", arg2);
 }
 
 void cpu::instr_lui(bool args_ok, const std::string &arg1, const std::string &arg2) {
@@ -295,12 +324,6 @@ void cpu::instr_sub(const bool args_ok, const std::string &arg1, const std::stri
 
     const size_t rd = get_register_index(arg1);
     const size_t rs1 = get_register_index(arg2);
-    if (arg3.front() == '-' || std::isdigit(arg3.front())) {
-        const int16_t imm12 = get_imm12(arg3);
-        write_register(rd, get_register_value(rs1) - imm12);
-        return;
-    }
-
     const size_t rs2 = get_register_index(arg3);
     write_register(rd, get_register_value(rs1) - get_register_value(rs2));
 }
@@ -361,12 +384,12 @@ void cpu::instr_sll(const bool args_ok, const std::string &arg1, const std::stri
     const size_t rs1 = get_register_index(arg2);
     if (arg3.front() == '-' || std::isdigit(arg3.front())) {
         const int16_t imm12 = get_imm12(arg3);
-        write_register(rd, static_cast<int32_t>(get_register_value_unsigned(rs1) << imm12));
+        write_register(rd, static_cast<int32_t>(get_register_value_unsigned(rs1) << get_bits_from_range(imm12, 0, 4)));
         return;
     }
 
     const size_t rs2 = get_register_index(arg3);
-    write_register(rd, static_cast<int32_t>(get_register_value_unsigned(rs1) << get_register_value_unsigned(rs2)));
+    write_register(rd, static_cast<int32_t>(get_register_value_unsigned(rs1) << get_bits_from_range(get_register_value_unsigned(rs2), 0, 4));
 }
 
 void cpu::instr_srl(const bool args_ok, const std::string &arg1, const std::string &arg2, const std::string &arg3) {
@@ -377,12 +400,12 @@ void cpu::instr_srl(const bool args_ok, const std::string &arg1, const std::stri
     const size_t rs1 = get_register_index(arg2);
     if (arg3.front() == '-' || std::isdigit(arg3.front())) {
         const int16_t imm12 = get_imm12(arg3);
-        write_register(rd, static_cast<int32_t>(get_register_value_unsigned(rs1) >> imm12));
+        write_register(rd, static_cast<int32_t>(get_register_value_unsigned(rs1) >> get_bits_from_range(imm12, 0, 4)));
         return;
     }
 
     const size_t rs2 = get_register_index(arg3);
-    write_register(rd, static_cast<int32_t>(get_register_value_unsigned(rs1) >> get_register_value_unsigned(rs2)));
+    write_register(rd, static_cast<int32_t>(get_register_value_unsigned(rs1) >> get_bits_from_range(get_register_value_unsigned(rs2), 0, 4));
 }
 
 void cpu::instr_sltu(const bool args_ok, const std::string &arg1, const std::string &arg2, const std::string &arg3) {
@@ -425,12 +448,12 @@ void cpu::instr_sra(const bool args_ok, const std::string &arg1, const std::stri
     const size_t rs1 = get_register_index(arg2);
     if (arg3.front() == '-' || std::isdigit(arg3.front())) {
         const int16_t imm12 = get_imm12(arg3);
-        write_register(rd, get_register_value(rs1) >> imm12);
+        write_register(rd, get_register_value(rs1) >> get_bits_from_range(imm12, 0, 4));
         return;
     }
 
     const size_t rs2 = get_register_index(arg3);
-    write_register(rd, get_register_value(rs1) >> get_register_value(rs2));
+    write_register(rd, get_register_value(rs1) >> get_bits_from_range(get_register_value(rs2), 0, 4));
 }
 
 void cpu::instr_beq(bool args_ok, const std::string &arg1, const std::string &arg2, const std::string &arg3) {
@@ -503,9 +526,15 @@ void cpu::instr_div(const bool args_ok, const std::string &arg1, const std::stri
     const size_t rd = get_register_index(arg1);
     const size_t rs1 = get_register_index(arg2);
     const size_t rs2 = get_register_index(arg3);
+    const uint32_t rs1_value = get_register_value(rs1);
     const int32_t rs2_value = get_register_value(rs2);
     if (rs2_value == 0) {
         write_register(rd, -1);
+        return;
+    }
+
+    if (rs1_value == INT_MIN && rs2_value == -1) {
+        write_register(rd, INT_MIN);
         return;
     }
 

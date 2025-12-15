@@ -126,11 +126,13 @@ class cpu {
 
     [[nodiscard]] static size_t     get_register_index(const std::string& reg_name);
     [[nodiscard]] static int16_t    get_imm12(const std::string& s);
+    [[nodiscard]] static int32_t    get_imm20(const std::string& s);
+    [[nodiscard]] static uint32_t   get_bits_from_range(uint32_t num, size_t start = 0, size_t end = 31);
     [[nodiscard]] int32_t           get_register_value(size_t idx) const;
     [[nodiscard]] uint32_t          get_register_value_unsigned(size_t idx) const;
     void                            write_register(size_t idx, int32_t value);
     static void                     prepare_instruction(std::string& inst);
-    [[nodiscard]] bool              is_comment(const std::string& s);
+    [[nodiscard]] bool              is_comment(const std::string& s) const;
 
     [[nodiscard]] static constexpr unsigned int hash(const char *s);
     /* INSTRUCTIONS */

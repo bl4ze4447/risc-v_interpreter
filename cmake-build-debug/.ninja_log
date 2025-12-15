@@ -37,3 +37,6 @@
 382	415	1765820448395595589	risc_v_emulator	bef796ef5c6ed31a
 7	542	1765821855746407965	CMakeFiles/risc_v_emulator.dir/cpu.cpp.o	7fb4d285c7341a0
 542	661	1765821856281182312	risc_v_emulator	bef796ef5c6ed31a
+28	627	1765838857359085577	CMakeFiles/risc_v_emulator.dir/main.cpp.o	23af23a76a7af847
+29	635	1765838857359942244	CMakeFiles/risc_v_emulator.dir/cpu.cpp.o	7fb4d285c7341a0
+635	763	1765838857966105622	risc_v_emulator	bef796ef5c6ed31a

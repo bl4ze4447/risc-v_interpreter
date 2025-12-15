@@ -50,6 +50,10 @@ struct reg {
 };
 
 class cpu {
+    const std::array<char, 2> _valid_com_chars = {
+        '#',
+        ';'
+    };
     const std::array<std::string, 67> _instructions = {
         "ret",
         "nop",
@@ -120,13 +124,16 @@ class cpu {
         "bleu"
     };
 
-    static size_t       get_register_index(const std::string& reg_name);
-    static int16_t      get_imm12(const std::string& s);
-    void                write_register(size_t idx, int32_t value);
-    int32_t             get_register_value(size_t idx) const;
-    uint32_t            get_register_value_unsigned(size_t idx) const;
-    static void         prepare_instruction(std::string& inst);
-    static constexpr unsigned int hash(const char *s);
+    [[nodiscard]] static size_t     get_register_index(const std::string& reg_name);
+    [[nodiscard]] static int16_t    get_imm12(const std::string& s);
+    [[nodiscard]] int32_t           get_register_value(size_t idx) const;
+    [[nodiscard]] uint32_t          get_register_value_unsigned(size_t idx) const;
+    void                            write_register(size_t idx, int32_t value);
+    static void                     prepare_instruction(std::string& inst);
+    [[nodiscard]] bool              is_comment(const std::string& s);
+
+    [[nodiscard]] static constexpr unsigned int hash(const char *s);
+    /* INSTRUCTIONS */
     void                instr_ret(bool args_ok);
     void                instr_nop(bool args_ok);
     void                instr_ecall(bool args_ok);

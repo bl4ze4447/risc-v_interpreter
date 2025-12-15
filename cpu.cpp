@@ -38,7 +38,7 @@ uint32_t cpu::get_bits_from_range(const uint32_t num, const size_t start, const 
     if (end > 31)
         throw std::invalid_argument("end cannot be bigger than 31: " + std::to_string(end));
 
-    const uint64_t mask = (1ULL << end-start+1) - 1;
+    const uint64_t mask = (1ULL << (end-start+1)) - 1;
     return (num >> start) & static_cast<uint32_t>(mask);
 }
 
@@ -394,7 +394,7 @@ void cpu::instr_sll(const bool args_ok, const std::string &arg1, const std::stri
     }
 
     const size_t rs2 = get_register_index(arg3);
-    write_register(rd, static_cast<int32_t>(get_register_value_unsigned(rs1) << get_bits_from_range(get_register_value_unsigned(rs2), 0, 4));
+    write_register(rd, static_cast<int32_t>(get_register_value_unsigned(rs1) << get_bits_from_range(get_register_value_unsigned(rs2), 0, 4)));
 }
 
 void cpu::instr_srl(const bool args_ok, const std::string &arg1, const std::string &arg2, const std::string &arg3) {
@@ -410,7 +410,7 @@ void cpu::instr_srl(const bool args_ok, const std::string &arg1, const std::stri
     }
 
     const size_t rs2 = get_register_index(arg3);
-    write_register(rd, static_cast<int32_t>(get_register_value_unsigned(rs1) >> get_bits_from_range(get_register_value_unsigned(rs2), 0, 4));
+    write_register(rd, static_cast<int32_t>(get_register_value_unsigned(rs1) >> get_bits_from_range(get_register_value_unsigned(rs2), 0, 4)));
 }
 
 void cpu::instr_sltu(const bool args_ok, const std::string &arg1, const std::string &arg2, const std::string &arg3) {

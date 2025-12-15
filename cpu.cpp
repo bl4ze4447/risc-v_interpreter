@@ -252,7 +252,12 @@ void cpu::instr_li(const bool args_ok, const std::string &arg1, const std::strin
     instr_add(true, arg1, "x0", arg2);
 }
 
-void cpu::instr_lui(bool args_ok, const std::string &arg1, const std::string &arg2) {
+void cpu::instr_lui(const bool args_ok, const std::string &arg1, const std::string &arg2) {
+    if (!args_ok) throw std::invalid_argument("Invalid args");
+
+    const size_t rd = get_register_index(arg1);
+    const int32_t imm20 = get_imm20(arg2);
+    write_register(rd, imm20 << 12);
 }
 
 void cpu::instr_auipc(bool args_ok, const std::string &arg1, const std::string &arg2) {

@@ -133,6 +133,8 @@ class cpu {
     void                            write_register(size_t idx, int32_t value);
     static void                     prepare_instruction(std::string& inst);
     [[nodiscard]] bool              is_comment(const std::string& s) const;
+    [[nodiscard]] std::string       get_clean_instruction(const std::string &op, const std::string &arg1, const std::string &arg2, const std::string &arg3) const;
+
 
     [[nodiscard]] static constexpr unsigned int hash(const char *s);
     /* INSTRUCTIONS */
@@ -169,16 +171,22 @@ class cpu {
     void                instr_sgtz(bool args_ok, const std::string& arg1, const std::string& arg2);
 
     void                instr_add(bool args_ok, const std::string& arg1, const std::string& arg2, const std::string& arg3);
+    void                instr_addi(bool args_ok, const std::string& arg1, const std::string& arg2, const std::string& arg3);
     void                instr_sub(bool args_ok, const std::string& arg1, const std::string& arg2, const std::string& arg3);
     void                instr_xor(bool args_ok, const std::string& arg1, const std::string& arg2, const std::string& arg3);
+    void                instr_xori(bool args_ok, const std::string& arg1, const std::string& arg2, const std::string& arg3);
     void                instr_or(bool args_ok, const std::string& arg1, const std::string& arg2, const std::string& arg3);
+    void                instr_ori(bool args_ok, const std::string& arg1, const std::string& arg2, const std::string& arg3);
     void                instr_and(bool args_ok, const std::string& arg1, const std::string& arg2, const std::string& arg3);
+    void                instr_andi(bool args_ok, const std::string& arg1, const std::string& arg2, const std::string& arg3);
     void                instr_sll(bool args_ok, const std::string& arg1, const std::string& arg2, const std::string& arg3);
-    //https://stackoverflow.com/questions/56879794/whats-the-difference-between-srl-and-sra
+    void                instr_slli(bool args_ok, const std::string& arg1, const std::string& arg2, const std::string& arg3);
     void                instr_srl(bool args_ok, const std::string& arg1, const std::string& arg2, const std::string& arg3);
+    void                instr_srli(bool args_ok, const std::string& arg1, const std::string& arg2, const std::string& arg3);
     void                instr_sltu(bool args_ok, const std::string& arg1, const std::string& arg2, const std::string& arg3);
     void                instr_slt(bool args_ok, const std::string& arg1, const std::string& arg2, const std::string& arg3);
     void                instr_sra(bool args_ok, const std::string& arg1, const std::string& arg2, const std::string& arg3);
+    void                instr_srai(bool args_ok, const std::string& arg1, const std::string& arg2, const std::string& arg3);
     void                instr_beq(bool args_ok, const std::string& arg1, const std::string& arg2, const std::string& arg3);
     void                instr_bne(bool args_ok, const std::string& arg1, const std::string& arg2, const std::string& arg3);
     void                instr_blt(bool args_ok, const std::string& arg1, const std::string& arg2, const std::string& arg3);
@@ -207,6 +215,7 @@ public:
 
     // data
     std::array<reg, 32> registers;
+    std::vector<uint32_t> stack;
 };
 
 #endif //CPU_H

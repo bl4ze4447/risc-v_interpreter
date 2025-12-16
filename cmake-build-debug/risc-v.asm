@@ -1,46 +1,50 @@
-; --- SETUP ---
-; x5 = INT_MAX (Maximum pozitiv pe 32 biți: 2,147,483,647)
-; 0x7FFFFFFF in hex
-addi x5, x0, 2047      ; Construim numărul bucată cu bucată
-slli x5, x5, 11        ; Shift stânga
-addi x5, x5, 2047      ; Adăugăm
-slli x5, x5, 10        ; Shift stânga
-addi x5, x5, 1023      ; Acum x5 = 2147483647 (0x7FFFFFFF)
+# --- 1. INITIALIZARE & PSEUDO-INSTRUCTIUNI FUNCȚIONALE ---
+nop                 # No Operation
+li x1, 20           # x1 = 20 (Load Immediate -> addi x1, x0, 20)
+li x2, 10           # x2 = 10
+li x3, -5           # x3 = -5
+mv x4, x1           # x4 = 20 (Move -> add x4, x1, x0)
+lui x5, 1           # x5 = 4096 (1 << 12) - ACUM FUNCTIONEAZA!
 
-addi x6, x0, -2        ; x6 = -2 (Pentru înmulțire negativă)
-add  x7, x0, x0        ; x7 = 0 (Pentru EDGE CASE: Diviziune la zero)
+# --- 2. ARITMETICĂ DE BAZĂ (ADD, SUB, NEG) ---
+add x6, x1, x2      # x6 = 20 + 10 = 30
+addi x7, x1, 5      # x7 = 20 + 5 = 25
+sub x8, x1, x2      # x8 = 20 - 10 = 10
+sub x9, x1, 5       # x9 = 20 - 5 = 15 (Folosind logica ta specială din instr_sub)
+neg x10, x2         # x10 = -10 (Pseudo -> sub x10, x0, x2)
 
-; --- EDGE CASE 1: Signed Overflow ---
-; Adăugăm 1 la numărul maxim pozitiv.
-; În mod normal, matematica spune 2,147,483,648.
-; În procesoare, acesta devine cel mai mic număr negativ (INT_MIN).
-addi x8, x5, 1         ; x8 = INT_MAX + 1 = INT_MIN (-2,147,483,648)
+# --- 3. LOGICĂ (AND, OR, XOR, NOT) ---
+and x11, x1, x2     # x11 = 20 & 10 (10100 & 01010) = 0
+andi x12, x1, 20    # x12 = 20 & 20 = 20
+or x13, x1, x2      # x13 = 20 | 10 (10100 | 01010) = 30 (11110)
+ori x14, x0, 7      # x14 = 7
+xor x15, x1, x2     # x15 = 20 ^ 10 = 30
+xori x16, x14, 7    # x16 = 7 ^ 7 = 0
+not x17, x0         # x17 = -1 (Pseudo -> xor x17, x0, -1)
 
-; --- EDGE CASE 2: High & Low Multiplication ---
-; Înmulțim un număr imens (x5) cu unul negativ (x6).
-; Rezultatul real ar fi -4,294,967,294. Asta depășește 32 biți.
-; mul  = păstrează partea de jos (low 32 bits).
-; mulh = păstrează partea de sus (high 32 bits).
-mul  x9, x5, x6        ; x9 = Low bits. Matematica modulară: Rezultatul e 2.
-mulh x10, x5, x6       ; x10 = High bits. Rezultatul e -1 (0xFFFFFFFF).
+# --- 4. SHIFTĂRI (SLL, SRL, SRA) - TESTAREA FIX-ULUI ---
+# x1 = 20 (Binary: ...00010100)
+sll x18, x1, 2      # x18 = 20 << 2 = 80
+slli x19, x1, 2     # x19 = 20 << 2 = 80
+srl x20, x1, 2      # x20 = 20 >> 2 = 5
+srli x21, x1, 2     # x21 = 20 >> 2 = 5
+li x22, -20         # x22 = -20
+sra x23, x22, 2     # x23 = -20 >> 2 (Arithmetic) = -5
+srai x24, x22, 2    # x24 = -5
 
-; --- EDGE CASE 3: Diviziunea la Zero (Comportament RISC-V) ---
-; RISC-V NU dă crash la împărțirea la zero. Are reguli specifice.
-; Regulă: x / 0 = -1 (toți biții pe 1).
-; Regulă: x % 0 = x (restul e deîmpărțitul).
-div  x11, x5, x7       ; x11 = INT_MAX / 0 = -1
-rem  x12, x5, x7       ; x12 = INT_MAX % 0 = INT_MAX
+# --- 5. COMPARAȚII (SLT, SLTU, SEQZ, SNEZ, ETC) ---
+slt x25, x3, x2     # x25 = 1 (pentru că -5 < 10)
+sltu x26, x3, x2    # x26 = 0 (pentru că -5 unsigned e uriaș > 10)
+seqz x27, x16       # x27 = 1 (Set Equal Zero: x16 e 0, deci true)
+snez x28, x1        # x28 = 1 (Set Not Equal Zero: x1 e 20, deci true)
+sltz x29, x3        # x29 = 1 (Set Less Than Zero: -5 < 0)
+sgtz x30, x1        # x30 = 1 (Set Greater Than Zero: 20 > 0)
 
-; --- COMPLEX LOGIC & SHIFT ---
-; Luăm x8 (INT_MIN = 1000...0000 binar) și îl procesăm.
-srai x13, x8, 31       ; Arithmetic Shift: Păstrează semnul. 1 -> 111...1 = -1
-srli x14, x8, 31       ; Logical Shift: Introduce zero. 1 -> 000...1 = 1
-
-; Combinăm totul cu XOR și AND
-xor  x15, x13, x14     ; x15 = -1 XOR 1.
-                       ; 111...111 XOR 000...001 = 111...110 (-2)
-and  x16, x11, x9      ; x16 = -1 AND 2.
-                       ; 111...111 AND 000...010 = 2
-
-; Ultimul test: Subtraction Immediate fără instrucțiune
-addi x17, x16, -10     ; x17 = 2 + (-10) = -8
+# --- 6. M-EXTENSION (MUL, DIV, REM) ---
+mul x1, x2, x3      # x1 = 10 * -5 = -50 (Refolosim x1)
+mulh x2, x2, x3     # x2 = High bits (-1 cel mai probabil)
+mov x3, x5, x5     # x3 = 4096 * 4096 (Unsigned)
+div x4, x1, x2      # x4 = -50 / -1 = 50
+divu x5, x1, x2     # x5 = Unsigned division
+rem x6, x1, x2      # x6 = Remainder
+remu x7, x1, x2     # x7 = Unsigned remainder

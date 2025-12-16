@@ -51,13 +51,13 @@ build cmake_object_order_depends_target_risc_v_emulator: phony || .
 
 build CMakeFiles/risc_v_emulator.dir/main.cpp.o: CXX_COMPILER__risc_v_emulator_unscanned_Debug /Users/bl4ze/CLionProjects/risc-v-emulator/main.cpp || cmake_object_order_depends_target_risc_v_emulator
   DEP_FILE = CMakeFiles/risc_v_emulator.dir/main.cpp.o.d
-  FLAGS = -g -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.4.sdk -fcolor-diagnostics
+  FLAGS = -g -std=gnu++20 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.4.sdk -fcolor-diagnostics
   OBJECT_DIR = CMakeFiles/risc_v_emulator.dir
   OBJECT_FILE_DIR = CMakeFiles/risc_v_emulator.dir
 
 build CMakeFiles/risc_v_emulator.dir/cpu.cpp.o: CXX_COMPILER__risc_v_emulator_unscanned_Debug /Users/bl4ze/CLionProjects/risc-v-emulator/cpu.cpp || cmake_object_order_depends_target_risc_v_emulator
   DEP_FILE = CMakeFiles/risc_v_emulator.dir/cpu.cpp.o.d
-  FLAGS = -g -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.4.sdk -fcolor-diagnostics
+  FLAGS = -g -std=gnu++20 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.4.sdk -fcolor-diagnostics
   OBJECT_DIR = CMakeFiles/risc_v_emulator.dir
   OBJECT_FILE_DIR = CMakeFiles/risc_v_emulator.dir
 

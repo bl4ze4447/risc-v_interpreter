@@ -21,9 +21,11 @@ int main() {
     //         }
     //     }
     // }
+    uint64_t line_number = 0;
     while (std::getline(fin, line)) {
         try {
-            cpu.execute_instruction(line);
+            ++line_number;
+            cpu.execute_instruction(line, line_number);
         } catch (const std::invalid_argument &e) {
             std::cout << e.what() << std::endl;
         }

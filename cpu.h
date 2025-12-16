@@ -133,7 +133,7 @@ class cpu {
     void                            write_register(size_t idx, int32_t value);
     static void                     prepare_instruction(std::string& inst);
     [[nodiscard]] bool              is_comment(const std::string& s) const;
-    [[nodiscard]] std::string       get_clean_instruction(const std::string &op, const std::string &arg1, const std::string &arg2, const std::string &arg3) const;
+    [[nodiscard]] std::string       clean_args_and_get_instruction(std::string &op, std::string &arg1, std::string &arg2, std::string &arg3) const;
 
 
     [[nodiscard]] static constexpr unsigned int hash(const char *s);
@@ -184,7 +184,9 @@ class cpu {
     void                instr_srl(bool args_ok, const std::string& arg1, const std::string& arg2, const std::string& arg3);
     void                instr_srli(bool args_ok, const std::string& arg1, const std::string& arg2, const std::string& arg3);
     void                instr_sltu(bool args_ok, const std::string& arg1, const std::string& arg2, const std::string& arg3);
+    void                instr_sltiu(bool args_ok, const std::string &arg1, const std::string &arg2, const std::string &arg3);
     void                instr_slt(bool args_ok, const std::string& arg1, const std::string& arg2, const std::string& arg3);
+    void                instr_slti(bool args_ok, const std::string &arg1, const std::string &arg2, const std::string &arg3);
     void                instr_sra(bool args_ok, const std::string& arg1, const std::string& arg2, const std::string& arg3);
     void                instr_srai(bool args_ok, const std::string& arg1, const std::string& arg2, const std::string& arg3);
     void                instr_beq(bool args_ok, const std::string& arg1, const std::string& arg2, const std::string& arg3);
@@ -210,7 +212,7 @@ public:
     cpu();
     static uint32_t     stoui_offset(const std::string& s, size_t offset);
     void                print_registers(bool hex = true) const;
-    void                execute_instruction(std::string& inst);
+    void                execute_instruction(std::string& inst, uint64_t line_number);
 
 
     // data
